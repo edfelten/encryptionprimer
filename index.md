@@ -10,20 +10,19 @@ Princeton University
 
 This paper offers a straightforward introduction to encryption, as it is implemented in modern systems, at a level of detail suitable for policy discussions. No prior background on encryption or data security is assumed.
 
-Encryption is used in two main scenarios. Encrypted storage allows information to be stored on a device, with encryption protecting the data should a malicious party get access to the device. Encrypted communication allows information to be transmitted from one party to another party, often across a network, with encryption protecting the data should a malicious party get access to the data while it is in transit. Encryption is used somewhat differently in these two scenarios, so it makes sense to present them separately.  We’ll discuss encrypted storage first, because it is simpler.
+Encryption is used in two main scenarios. *Encrypted storage* allows information to be stored on a device, with encryption protecting the data should a malicious party get access to the device. *Encrypted communication* allows information to be transmitted from one party to another party, often across a network, with encryption protecting the data should a malicious party get access to the data while it is in transit. Encryption is used somewhat differently in these two scenarios, so it makes sense to present them separately.  We’ll discuss encrypted storage first, because it is simpler.
 
 We emphasize that the approaches described here are not detailed descriptions of any particular existing system, but rather generic descriptions of how state-of-the-art systems typically operate. Specific products and standards fill in the details differently, but they are roughly similar at the level of detail given here.
 
 ### Encrypted storage
 
-Suppose a user, Alice, wants to store data on a device, which might be a smartphone in her possession, or might be a storage server operated by a service provider.  Alice generates a secret key that only she knows, and she uses the secret key to encrypt the data. Encryption protects the confidentiality of the data, so that a malicious actor who gets access to the device, but does not know the secret key, cannot learn the contents of Alice’s data. Encryption also protects the integrity of the data, so that a malicious actor who gets access to the device, but does not know the secret key, cannot tamper with the data without Alice detecting that tampering occurred.
+Suppose a user, Alice, wants to store data on a device, which might be a smartphone in her possession, or might be a storage server operated by a service provider.  Alice generates a secret key that only she knows, and she uses the secret key to encrypt the data. Encryption protects the *confidentiality* of the data, so that a malicious actor who gets access to the device, but does not know the secret key, cannot learn the contents of Alice’s data. Encryption also protects the *integrity* of the data, so that a malicious actor who gets access to the device, but does not know the secret key, cannot tamper with the data without Alice detecting that tampering occurred.
 
 Encryption on a device such as a smartphone typically works as depicted below. A device key, which is unique to Alice’s specific phone, is built into the phone when the phone is manufactured. In addition, Alice enters a secret passcode when she unlocks the phone. The device key and passcode are combined by cryptographic means to create a storage key, which will be used to encrypt data. From that point on, whenever an app wants to store data, the data is encrypted with the storage key, before the data is put into storage. Whenever an app wants to retrieve data from storage, the data is decrypted before it is returned to the app. When the system decrypts data, it also checks for tampering.
 
 Because all data is encrypted before it is put into storage, a malicious party who steals the device but does not know Alice’s secret key cannot recover Alice’s data, nor can such a party tamper with Alice’s data without detection.
 
-![diagram of encrypted storage]
-(https://github.com/ewfelten/encryptionprimer/blob/master/encryption_diagram_1.png)
+![diagram of encrypted storage](https://github.com/ewfelten/encryptionprimer/blob/master/encryption_diagram_1.png)
 
 The security of data on the device depends ultimately on two keys.  The use of the device key ensures that data can be decrypted only on Alice’s specific phone—and the phone typically is physically “hardened” so that it is very difficult for a malicious party to extract the device key. The use of Alice’s passcode ensures that Alice must take explicit action—entering her passcode—to enable decryption or modification of data.
 
@@ -35,16 +34,15 @@ But these protections will be in vain if a malicious party can guess Alice’s p
 
 Encrypted communication works differently.
 
-Suppose two users, Alice and Bob, want to send a series of messages to each other. They want to use encryption to protect the confidentiality of messages (so that nobody else can learn the contents of messages) and the integrity of messages (so that nobody else can tamper with messages without detection); and they want to use encryption to authenticate each other, so they both know they are not communicating with an impostor.
+Suppose two users, Alice and Bob, want to send a series of messages to each other. They want to use encryption to protect the *confidentiality* of messages (so that nobody else can learn the contents of messages) and the *integrity* of messages (so that nobody else can tamper with messages without detection); and they want to use encryption to *authenticate* each other, so they both know they are not communicating with an impostor.
 
-For encrypted communication, each party will generate a long-term identity key, which they keep secret. A party can use its long-term identity key to prove its identity to other parties.
+For encrypted communication, each party will generate a *long-term identity key*, which they keep secret. A party can use its long-term identity key to prove its identity to other parties.
 
-As depicted below, encrypted communication operates in two phases. In the first phase, the handshake, the two parties exchange a series of specially constructed messages.  If all goes well, the initial handshake has two results: each party gets confirmation of the other’s identity (i.e. that the other party is the real Alice or Bob, and not an impostor), and Alice and Bob agree on a secret session key that is known only to the two of them. The details of how the initial handshake procedure gets these results are complex but not directly relevant to the policy discussion.
+As depicted below, encrypted communication operates in two phases. In the first phase, the *handshake*, the two parties exchange a series of specially constructed messages.  If all goes well, the initial handshake has two results: each party gets confirmation of the other’s identity (i.e. that the other party is the real Alice or Bob, and not an impostor), and Alice and Bob agree on a secret *session key* that is known only to the two of them. The details of how the initial handshake procedure gets these results are complex but not directly relevant to the policy discussion.
 
 Having completed the initial handshake, Alice and Bob can proceed to send messages to each other. If Alice wants to send a message to Bob, she encrypts that message with the session key and sends the resulting encrypted data to Bob. Bob uses the session key to decrypt the message, thereby recovering the original message and confirming that there was no tampering while the message was in transit.
 
-![diagram of encrypted storage]
-(https://github.com/ewfelten/encryptionprimer/blob/master/encryption_diagram_1.png)
+![diagram of encrypted storage](https://github.com/ewfelten/encryptionprimer/blob/master/encryption_diagram_1.png)
 
 Encrypted communication systems uses different cryptographic keys for different purposes. Each party has a long-term identity key, which is used in the initial handshake phase to authenticate the party’s identity and negotiate an initial session key. If a malicious party learns Alice’s long-term identity key, this would allow that party to impersonate Alice in the future, but it would not allow decryption or tampering with messages sent in a non-impersonated session.
 
